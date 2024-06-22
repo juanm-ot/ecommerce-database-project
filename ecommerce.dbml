@@ -1,0 +1,49 @@
+Project transactional_core {
+    database_type: 'PostgreSQL'
+}
+
+Table ecommerce.customer {
+  customer_id SERIAL [primary key]
+  name varchar(255) [not null]
+  last_name varchar(255) [not null]
+  email varchar(255) [not null]
+  phone varchar(100) [not null]
+  address varchar(255) [not null]
+  gender varchar(10) 
+  birth_date timestamp [not null]
+  created_at timestamp [default: `now()`]
+  
+}
+
+Table ecommerce.item {
+  item_id SERIAL [primary key]
+  customer_id integer [not null]
+  category_id varchar(255) [not null]
+  price numeric(15,4) [not null]
+  status varchar(255) [not null]
+  published_date timestamp [not null]
+  created_at timestamp [default: `now()`]
+}
+
+Table ecommerce.category {
+  category_id varchar(255) [primary key]
+  category_name varchar(255) [not null]
+  parent_id varchar(255)
+  path varchar(255) [not null]
+  
+}
+
+Table ecommerce.orders {
+  order_id integer [primary key]
+  item_id integer [not null]
+  customer_id integer [not null]
+  total_items integer [not null]
+  order_date timestamp [not null]
+  
+}
+
+Ref: ecommerce.customer.customer_id < ecommerce.item.customer_id // one-to-many
+Ref: ecommerce.category.category_id - ecommerce.item.category_id // one-to-one
+Ref: ecommerce.category.category_id < ecommerce.category.parent_id // one-to-man
+Ref: ecommerce.item.item_id - ecommerce.orders.item_id  // one-to-one
+Ref: ecommerce.customer.customer_id < ecommerce.orders.customer_id // one-to-many
