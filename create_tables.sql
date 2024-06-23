@@ -6,6 +6,7 @@
 --              para mejorar el rendimiento en consultas específicas.
 -- ============================================================================
 
+
 -- (A) Generar una funcion de borrado si existen las tablas y el schema, con este proceso 
 --     se garantiza empezar limpio.
 DROP TABLE IF EXISTS ecommerce.customer CASCADE;
@@ -14,7 +15,7 @@ DROP TABLE IF EXISTS ecommerce.category CASCADE;
 DROP TABLE IF EXISTS ecommerce.orders CASCADE;
 
 DROP SCHEMA IF EXISTS ecommerce CASCADE;
- 
+
 -- (B) Creacion del schema y de las tablas pertenecientes
 CREATE SCHEMA ecommerce;
 
@@ -24,7 +25,7 @@ CREATE TABLE ecommerce.customer (
   name varchar(255) NOT NULL,
   last_name varchar(255) NOT NULL,
   email varchar(255) NOT NULL,
-  phone varchar(20) NOT NULL,
+  phone varchar(100) NOT NULL,
   address varchar(255) NOT NULL,
   gender varchar(10),
   birth_date timestamp NOT NULL,
@@ -34,7 +35,7 @@ CREATE TABLE ecommerce.customer (
 -- (B.2) Almacena productos(items)
 CREATE TABLE ecommerce.item (
   item_id SERIAL PRIMARY KEY,
-  customer_id integer UNIQUE NOT NULL,
+  customer_id integer NOT NULL,
   category_id varchar(255) NOT NULL,
   price numeric(15,4) NOT NULL,
   status varchar(255) NOT NULL,

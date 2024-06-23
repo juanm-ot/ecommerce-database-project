@@ -1,57 +1,48 @@
-## Importar librerias 
+## IMPORTAR LIBRERIAS
 import os
 from dotenv import load_dotenv
 import psycopg2
 import psycopg2.extras
 import functions 
 
-## Cargar las variables de entorno
-load_dotenv()
 
-## Obtener los parámetros de conexión a la base de datos desde las variables de entorno
-dbname = os.getenv("DBNAME")
+## CONFIGURACION
+load_dotenv() # cargar variables de entorno
+
+## CONEXION A LA BASE DE DATOS
+dbname = os.getenv("DBNAME") # obtener parametros de conexión
 user = os.getenv("DBUSER")
 password = os.getenv("PASSWORD")
 host = os.getenv("HOST")
 port = os.getenv("PORT")
 
-try:
-    # Verificar valores de las variables de entorno
+try: # verificar valores de las variables de entorno
     print(f"DBNAME: {dbname}")
     print(f"DBUSER: {user}")
     print(f"HOST: {host}")
     print(f"PORT: {port}")
-
-    # Conectar a la base de datos PostgreSQL
-    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
-    print("******Successful connection******")
     
-    # Crear un cursor para ejecutar consultas SQL
-    cursor = conn.cursor()
+    conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port) # conectar a la base de datos
+    print("Successful connection to the PostgreSQL database")
+    cursor = conn.cursor()  # cursor para ejecutar consultas SQL
 
-    # Ejecutar una prueba simple de consulta para verificar la conexión
-    cursor.execute("SELECT 1")
+    cursor.execute("SELECT 1") # ejecutar consulta de prueba para verificar la conexion
     row = cursor.fetchone()
-    print("Successful test query:", row)
-    
+    print("Success: The test query was successful", row)    
 except Exception as e:
     print(f"Error connecting to the database: {e}")
     exit(1)
 
+## JOB PARA POBLAR LA BASE DE DATOS
+num_customers = 50000 # definir el volumen de data dummie
+num_items = 250000
+num_orders = 100000
 
-# Definir el numero de datos a generar
-num_customers = 1000
-num_categories = 100
-num_items = 5000
-num_orders = 12000
-
-# Llamar a las funciones para poblar las tablas creadas
-functions.populate_customers(num_customers, cursor)
-functions.populate_categories(num_categories, cursor)
+functions.populate_customers(num_customers, cursor) # llamar las funciones para poblar la base de datos
+functions.populate_categories(cursor)
 functions.populate_items(num_items, cursor)
 functions.populate_orders(num_orders, cursor)
 
-# Enviar los cambios y cerrar la conexion
-conn.commit()
+conn.commit() # enviar los cambios y cerrar la conexion
 cursor.close()
 conn.close()
