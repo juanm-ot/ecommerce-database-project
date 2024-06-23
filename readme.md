@@ -42,13 +42,13 @@ Se utiliza la librería Faker de Python para generar los datos. Se referencia aq
 
 1. En el archivo `functions.sql` se crean las funciones para poblar las tablas del proyecto:
   * **populate_customers:** Se usan las funciones de la libreria Fake para generar los datos de acuerdo al tipo. Las funciones usadas son: first_name() para name, last_name() para name, email() para email, phone_number() para phone, address() para address, random_element() para genero asignando las opciones Femenino y Masculino y finalmente date_of_birth() para birth_date.
-  ![customers](ecommerce-database-project/resources/project_master/customer_table.png)
+  ![customers](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/customer_table.png?raw=true)
   * **populate_categories:** Se propociona una lista de categorias padre con sus respectivas categorias hijas. Por ejemplo: **Tecnologia** como categoria padre y *Celulares, Consolas y Videojuegos,Computadoras y Laptops, Accesorios Electrónicos* como categorias hijas. 
-  ![category](ecommerce-database-project/resources/project_master/category_table.png)
+  ![category](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/category_table.png?raw=true)
   * **populate_items:** Para crear la data de items, los campos category_id y customer_id se hacen coincidir con los datos generados en las funciones anteriores para que hagan sentidos las relaciones entre entidades; estos campos se ingestan en la nueva tabla con la funcion fake.random_element(). Se usan las funciones random_number() para el price, random_element para status asignando las opciones activo e inactivo y finalmente date_this_decade() para published_date
-  ![item](ecommerce-database-project/resources/project_master/item_table.png)
+  ![item](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/item_table.png?raw=true)
   * **populate_orders:** Para crear la data de orders, los campos item_id y customer_id se hacen coincidir con los datos generados en las funciones anteriores para que hagan sentidos las relaciones entre entidades; estos campos se ingestan en la nueva tabla con la funcion fake.random_element(). Se usan las funciones random_int() para total_items y finalmente date_time_between_dates() para genera el order_date estableciendo el rango de años entre 2020 y 2023.
-  ![orders](ecommerce-database-project/resources/project_master/orders_table.png)
+  ![orders](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/orders_table.png?raw=true)
 
 2. En el archivo `populate.sql` se encarga de cargar las variables de entorno para configurar la conexion, crear la conexion a la base de datos, orquestar las funciones para ingestar la data y cerrar la conexion una vez el proceso finalice. Los parametros para el volumen de datos dummies generados para cada entidad: 
 
@@ -64,11 +64,11 @@ La data dummie generada permitio darle sentido a las querys solicitadas por el e
 Se desarrollaron tres ejercicios, almacenados en el archivo `respuestas_negocio.sql`:
 
 1. CTE para calcular el número de ordenes por mes para cada vendedor, filtrando los que tienen > 1500 ordenes. Se filtra la subconsulta anterior segun la fecha de la orden y la fecha de cumpleaños del vendedor.
-![ejercicio_1](ecommerce-database-project/resources/project_master/ejercicio_1.png)
+![ejercicio_1](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/ejercicio_1.png?raw=true)
 Nota: Con la data generada aleatoriamente no fue posible lograr que se cumplieran todas las condiciones para evidenciarlas en el query, entonces para efectos de este ejercicio se ignoro la cantidad de ordenes o ventas > 1500. En el codigo, si cumple con el requerimiento
 
 2. CTE para caracterizar en terminos de volumen (total_items, total_ordenes, total_sales-$) las ventas mensuales por customer(seller) y categoria. CTE para ordenar los customers por total_sales-$ en cada mes usando una window function. Se filtra la subconsulta anterior para los customers que estan en el top 5 segun total_sales en el año 2020. 
-![ejercicio_2](ecommerce-database-project/resources/project_master/ejercicio_2.png)
+![ejercicio_2](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/ejercicio_2.png?raw=true)
 
 ### Análisis de costos de procesamiento
 En este query, se explora el costo asociado al procesamiento utilizando la función descrita a continuación, junto con las funcionalidades disponibles en pgAdmin para este propósito, como se muestra en el análisis gráfico adjunto en la imagen.
@@ -76,7 +76,7 @@ En este query, se explora el costo asociado al procesamiento utilizando la funci
 ```
  EXPLAIN ANALYZE (+query)
 ```
-![explain_analyze_graph](ecommerce-database-project/resources/project_master/graph_explain.png)
+![explain_analyze_graph](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/graph_explain.png?raw=true)
 
 Para iniciar, se calculó el costo con la consulta propuesta, obteniendo un **cost = 10207.20**. Posteriormente, se agregaron índices a partir de las funciones críticas en la consulta, guiados por el volumen de datos y los procesos de la misma. A continuación, se muestran los índices que se probaron:
 
@@ -90,7 +90,7 @@ CREATE INDEX idx_item_category_id ON ecommerce.item (category_id);
 
 Después de varias iteraciones, se determinó que debido al ***potencial volumen de ítems***, era crucial optimizar las consultas basadas en item_id en la tabla orders, así como las consultas que buscan ítems usando category_id como referencia (índices no comentados en el código anterior). Esta optimización resultó en un **cost = 7242.66**, lo cual demostró la efectividad de los índices y subrayó la importancia de considerarlos en el diseño del sistema gracias a una optimización del 29,06% asociada a la reducción del costo de procesamiento.
 
-![query_plan](ecommerce-database-project/resources/project_master/query_plan.png)
+![query_plan](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/project_master/query_plan.png?raw=true)
 
 3. Creación de la tabla ecommerce.historical_item_daily_snapshot, desarrollo del procedimiento(SP) almacenado populate_item_daily_snapshot y verificación de su funcionamiento. Este ejercicio esta ampliamente documentado la seccion **Ejercicio 3** del archivo `respuestas_negocio.sql`
 
@@ -128,8 +128,8 @@ Prerrequisitos:
 
 1. Abrir una terminal de git bash
 2. Otorgar permisos para la ejecución del archivo .sh con el comando `chmod +x run.sh`
-![Step 2](ecommerce-database-project/resources/set_up_environment/2.png)
+![Step 2](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/set_up_environment/2.png?raw=true)
 3. Modificar el archivo **run.sh** e incluir en la linea 4 la ruta a la instalación de PostgreSQL en el sistema. Para el caso de este ambiente es: `"C:\Program Files\PostgreSQL\16\bin\psql.exe"`
 4. Editar el archivo **.env** con los datos necesarios para conectar el bash como administrador al servidor local de base de datos. Esto permitirá la creación de la base de datos y su esquema. Además modificar el puerto y el host si es necesario.
 5. Correr el archivo .sh con el comando `./run.sh`
-![Step 5](ecommerce-database-project/resources/set_up_environment/5.png)
+![Step 5](https://github.com/juanm-ot/ecommerce-database-project/blob/main/resources/set_up_environment/5.png?raw=true)
