@@ -104,14 +104,14 @@ La data dummie generada permitio darle sentido a las querys solicitadas por el e
 Se desarrollaron tres ejercicios, almacenados en el archivo `respuestas_negocio.sql`:
 
 1. CTE para calcular el número de ordenes por mes para cada vendedor, filtrando los que tienen > 1500 ordenes. Se filtra la subconsulta anterior segun la fecha de la orden y la fecha de cumpleaños del vendedor.
-![ejercicio_1](resources/project_master/ejercicio_1.png)
+![ejercicio_1](resources/project_master/ejercicio__1.png)
 Nota: Con la data generada aleatoriamente no fue posible lograr que se cumplieran todas las condiciones para evidenciarlas en el query, entonces para efectos de este ejercicio se ignoro la cantidad de ordenes o ventas > 1500. En el codigo, si cumple con el requerimiento
 
 2. CTE para caracterizar en terminos de volumen (total_items, total_ordenes, total_sales-$) las ventas mensuales por customer(seller) y categoria. CTE para ordenar los customers por total_sales-$ en cada mes usando una window function. Se filtra la subconsulta anterior para los customers que estan en el top 5 segun total_sales en el año 2020. 
 ![ejercicio_2](resources/project_master/ejercicio_2.png)
 
 ### Análisis de costos de procesamiento
-En este query, se explora el costo asociado al procesamiento utilizando la función descrita a continuación, junto con las funcionalidades disponibles en pgAdmin para este propósito, como se muestra en el análisis gráfico adjunto en la imagen.
+En el query 2, se explora el costo asociado al procesamiento utilizando la función descrita a continuación, junto con las funcionalidades disponibles en pgAdmin para este propósito, como se muestra en el análisis gráfico adjunto en la imagen.
 
 ```
  EXPLAIN ANALYZE (+query)
@@ -133,20 +133,18 @@ Después de varias iteraciones, se determinó que debido al ***potencial volumen
 ![query_plan](resources/project_master/query_plan.png)
 
 
-## Creacion de procedimientos de negocio
+## Creación de procedimientos de negocio
 Como parte del entregable se solicita la creacion de un procedmiento almacenado que mantenga el historico por dias del estado y precio de los items. Ademas, que tenga capacidad de reprocesamiento. 
 
 Para esto, en el archivo `respuestas_negocio.sql`, en la seccion "SECCION A RESOLVER: EJERCICIO 3", encontrara los insumos ampliamente documentados para cargar y probar correctamente el procedimiento. a continuación se describe la ejecución de los pasos alli descritos:
-#### 1. Creacion de la tabla ecommerce.historical_item_daily_snapshot 
-Tabla para mantener el historico de los items alimentada por el sp (procedimiento almacenado por sus siglas en ingles) populate_item_daily_snapshot
-![historical_item_daily_table](resources/project_master/historical_item_daily_table.png)
 
+#### 1. Creación de la tabla ecommerce.historical_item_daily_snapshot 
+Tabla para mantener el historico de los ítems alimentada por el SP (procedimiento almacenado por sus siglas en ingles) populate_item_daily_snapshot <br><br>
+![historical_item_daily_table](resources/project_master/historical_item_daily_table.png)
 
 #### 2. Creación del procedimiento almacenado
 Se crea el procedimiento almacenado `populate_item_daily_snapshot` encargado de alimentar la tabla `ecommerce.historical_item_daily_snapshot`. 
-
-**Cabe resaltar que el reprocesamiento aplica para el dia actual y no para dias pasados como se mostrara más adelante**.
-
+>**Cabe resaltar que el reprocesamiento aplica para el dia actual y no para dias pasados como se mostrara más adelante**.
 ![sp_populate_item_daily_snapshot_execution](resources/project_master/sp_populate_item_daily_snapshot_execution.png)
 
 
@@ -155,23 +153,23 @@ Se crea el procedimiento almacenado `populate_item_daily_snapshot` encargado de 
 Para que las siguientes pruebas sean replicables se debe realizar la adecuación de la data que se va a probar. Esto se realiza ejecucnado la siuiente sentencia de actualziacion en la tabla `item` : 
 `UPDATE ecommerce.item SET status = 'activo'  WHERE item_id = 3;`
 
-- Llamar al procedimiento una primera vez:
+- Llamar al procedimiento una primera vez:<br><br>
 ![call_sppopulate_item_daily_snapshot](resources/project_master/call_sppopulate_item_daily_snapshot.png)
-Validamos la tabla del historico: 
+- Se valida la tabla del historico: <br><br>
 ![call_sppopulate_item_daily_snapshot](resources/project_master/validacion_carga_historico_1.png)
 
-- Simular carga de más de 1 día
-Para esto primero tenemos que cambiar la fecha de los registros de esa primera carga que se realizo para simular que fueron cargados 'ayer'. Eso se logra con el siguiente update: ![update_historical_change_load_date](resources/project_master/update_historical_change_load_date.png)
-Ademas, cambiamos el estado de algun item para visualizar la diferencia al momento de volver a llamar el procedimiento (sp)
+- Simular carga de más de 1 día.
+Para esto primero se cambiar la fecha de los registros de esa primera carga que se realizo para simular que fueron cargados 'ayer'. Eso se logra con el siguiente update:<br><br> ![update_historical_change_load_date](resources/project_master/update_historical_change_load_date.png)
+Ademas, se cambia el estado de algun item para visualizar la diferencia al momento de volver a llamar el procedimiento(SP)<br><br>
 ![update_item](resources/project_master/update_item.png)
-Volvemos a llamar al procedmiento y validamos el historico
+Se llama nuevamente al procedmiento y se valida el historico <br><br>
 ![validacion_carga_historico_2](resources/project_master/validacion_carga_historico_2.png)
-Encontramos que ya hay dos registros para "diferentes" días.
+Se encuentra que ya hay dos registros para "diferentes" días.
 
-- Simular reprocesamiento del día
-Procedemos a realizar actualizacion del item con id 3 en la tabla item, volver a colocarlo activo y cambiar el precio.
+- Simular reprocesamiento del día.
+Se procede a realizar actualización del item con id 3 en la tabla item, volver a cambiarlo a estado activo y modificar el precio.<br><br>
 ![update_reprocesamiento](resources/project_master/update_reprocesamiento.png)
-validamos que en el historico conservamos los mismos 2 registros para el item_id 3, sin embargo el ultimo registro ha cambiado con respecto al resultado del punto anterior ya que se ha reprocesado con la nueva informacion de la tabla `item`
+Se valida que en el historico se conserven los mismos 2 registros para el item_id 3, sin embargo el ultimo registro ha cambiado con respecto al resultado del punto anterior ya que se ha reprocesado con la nueva informacion de la tabla `item`. <br><br>
 ![validacion_carga_historico_3](resources/project_master/validacion_carga_historico_3.png)
 
 

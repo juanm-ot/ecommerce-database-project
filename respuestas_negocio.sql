@@ -203,7 +203,7 @@ SELECT * FROM ecommerce.historical_item_daily_snapshot WHERE item_id = '3';
 UPDATE ecommerce.item SET price = 23000 WHERE item_id = 3;
 UPDATE ecommerce.item SET status = 'activo'  WHERE item_id = 3;
 CALL populate_item_daily_snapshot();
--- (C.1) Consulta para validar que se tienen los mismos registros para el item_id
---       con los cambios asociados al reprocesamiento del procedmiento con las actualizaciones de la tabla item.
+-- (C.1) Consulta para validar que se tienen los mismos registros para el item_id con los
+--       cambios asociados al reprocesamiento del procedmiento con las actualizaciones de la tabla item.
 SELECT * FROM ecommerce.historical_item_daily_snapshot WHERE item_id = '3';
 
