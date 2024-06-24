@@ -142,6 +142,8 @@ BEGIN
     ) AS latest_items;
 END $$;
 
+-- (0) Adecuar el item de prueba
+UPDATE ecommerce.item SET status = 'activo'  WHERE item_id = 3;
 
 -- (A) Llamar una primera vez al procedimiento almacenado(SP) para que haga una primera carga
 CALL populate_item_daily_snapshot();
@@ -177,7 +179,7 @@ SELECT * FROM ecommerce.historical_item_daily_snapshot where item_id = '3';
 -- ============================================================================
 
 -- (A) Proceso para actualizar un estado en la tabla item
-UPDATE ecommerce.item SET status = 'activo'  WHERE item_id = 3;
+UPDATE ecommerce.item SET status = 'inactivo'  WHERE item_id = 3;
 
 -- (A.1) Consulta para validar el cambio de estado tras la actualizacion
 SELECT * FROM ecommerce.item where item_id =3;
@@ -199,4 +201,9 @@ SELECT * FROM ecommerce.historical_item_daily_snapshot WHERE item_id = '3';
 
 -- (D) Se actualiza un dato asociado al item_id de prueba. Se invoca al SP para que actualice la data
 UPDATE ecommerce.item SET price = 23000 WHERE item_id = 3;
+UPDATE ecommerce.item SET status = 'activo'  WHERE item_id = 3;
 CALL populate_item_daily_snapshot();
+-- (C.1) Consulta para validar que se tienen los mismos registros para el item_id
+--       con los cambios asociados al reprocesamiento del procedmiento con las actualizaciones de la tabla item.
+SELECT * FROM ecommerce.historical_item_daily_snapshot WHERE item_id = '3';
+
